@@ -341,6 +341,9 @@ DWORD WINAPI FindThreadProc()
 		case Mobs:
 			ZiTu = (HBITMAP)LoadImage(NULL, L"image//xioagua.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			break;
+		case Boss:
+			ZiTu = (HBITMAP)LoadImage(NULL, L"image//Boss.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			break;
 		default:
 			break;
 		}
