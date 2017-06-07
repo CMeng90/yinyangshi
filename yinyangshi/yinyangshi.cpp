@@ -2,7 +2,11 @@
 //
 
 #include "stdafx.h"
+#include <string>
+#include <stdio.h> 
 #include "yinyangshi.h"
+
+#include "game.h"
 
 #define MAX_LOADSTRING 100
 
@@ -10,6 +14,8 @@
 HINSTANCE hInst;                                // 当前实例
 WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
 WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
+
+HWND hWnd;		//主窗口句柄				
 
 // 此代码模块中包含的函数的前向声明: 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -97,7 +103,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
@@ -108,8 +114,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
+   Game_Init();
+
    return TRUE;
 }
+HWND hwndEDIT;
+void SAVE_chuli();
 
 //
 //  函数: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -123,8 +133,21 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    switch (message)
-    {
+	static int   cxChar, cyChar;
+
+	switch (message)
+	{
+	case WM_CREATE:
+		cxChar = LOWORD(GetDialogBaseUnits());
+		cyChar = HIWORD(GetDialogBaseUnits());
+		hwndEDIT = CreateWindow(TEXT("Edit"),
+			TEXT("开始挂机"),
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_BORDER,
+			cxChar, cyChar * 10,
+			30 * cxChar, 7 * cyChar / 4,
+			hWnd, NULL,
+			((LPCREATESTRUCT)lParam)->hInstance, NULL);
+		break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -137,6 +160,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
+			case ID_32771:
+				MessageBoxW(NULL, L"游戏开始", NULL, MB_OK);
+				 Game_Start();
+				break;
+			case ID_32772:
+				SAVE_chuli();
+				break;
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
@@ -151,6 +181,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_DESTROY:
+		Game_Exit();
         PostQuitMessage(0);
         break;
     default:
@@ -177,4 +208,52 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+
+
+void SAVE_chuli()
+{
+	static int Save_type = 0;
+	char str[100];
+	char * split = ",";
+	char * p;
+	char *next_token = nullptr;
+	int x, y, nWidth, nHeight;
+
+	if (Save_type == 0)
+	{
+		Save_Bmp();
+		MessageBoxW(NULL, L"还需要输入保存的坐标值，再保存一次", NULL, MB_OK);
+		Save_type = 1;
+	}
+	else
+	{
+		GetWindowTextA(hwndEDIT, str, 100);
+		if ((p = strtok_s(str, split, &next_token)) != NULL)
+		{
+			sscanf_s(p, "%d", &x);
+		}
+		if ((p = strtok_s(NULL, split, &next_token)) != NULL)
+		{
+			sscanf_s(p, "%d", &y);
+		}
+		if ((p = strtok_s(NULL, split, &next_token)) != NULL)
+		{
+			sscanf_s(p, "%d", &nWidth);
+		}
+		if ((p = strtok_s(NULL, split, &next_token)) != NULL)
+		{
+			sscanf_s(p, "%d", &nHeight);
+		}
+		else
+		{
+			MessageBoxW(NULL, L"填写大小坐标不对，重来", NULL, MB_OK);
+		}
+
+		Save_Bmp(x, y, nWidth, nHeight, L"image//save2.bmp");
+		MessageBoxW(NULL, L"保存成功", NULL, MB_OK);
+
+		Save_type = 0;
+	}
 }
