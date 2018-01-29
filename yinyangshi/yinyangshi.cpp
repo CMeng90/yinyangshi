@@ -155,7 +155,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hWnd, NULL,
 			((LPCREATESTRUCT)lParam)->hInstance, NULL);
 
-			//初始化游戏外部接口 
+			//初始化游戏外部接口1
 			if (Game_Init() != true)
 			{
 				SendMessage(hWnd, WM_DESTROY, 0, 0);
