@@ -44,6 +44,15 @@
     <ClCompile Include="Game.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="YuHun.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ShuaTu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="shibie.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="yinyangshi.rc">

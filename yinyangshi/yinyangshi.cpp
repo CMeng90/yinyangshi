@@ -114,12 +114,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
-   Game_Init();
 
    return TRUE;
 }
 HWND hwndEDIT;
 void SAVE_chuli();
+void Thread_YuHun(void);
+
+BOOL BitmapToBitmap32(HBITMAP   hBitmap1, HBITMAP hBitmap2);
 
 //
 //  函数: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -135,6 +137,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static int   cxChar, cyChar;
 
+	//HBITMAP ZiTu1 = (HBITMAP)LoadImage(NULL, L"image//tmp.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	//HBITMAP ZiTu2 = (HBITMAP)LoadImage(NULL, L"image//Mobs.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	cxChar = sizeof(BITMAPINFOHEADER);
+
 	switch (message)
 	{
 	case WM_CREATE:
@@ -147,6 +154,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			30 * cxChar, 7 * cyChar / 4,
 			hWnd, NULL,
 			((LPCREATESTRUCT)lParam)->hInstance, NULL);
+
+			//初始化游戏外部接口 
+			if (Game_Init() != true)
+			{
+				SendMessage(hWnd, WM_DESTROY, 0, 0);
+			}
+
 		break;
     case WM_COMMAND:
         {
@@ -161,10 +175,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DestroyWindow(hWnd);
                 break;
 			case ID_32771:
-				MessageBoxW(NULL, L"游戏开始", NULL, MB_OK);
-				 Game_Start();
+				MessageBoxW(NULL, L"探索开始", NULL, MB_OK);
+
+				Game_Start();
+				//Thread_YuHun();			
+				//BitmapToBitmap32(ZiTu1, ZiTu2);
+
 				break;
 			case ID_32772:
+				MessageBoxW(NULL, L"御魂觉醒开始", NULL, MB_OK);
+				Thread_YuHun();
+				break;
+			case ID_32773:
 				SAVE_chuli();
 				break;
             default:
